@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-punto1',
-  imports: [],
+  standalone: true, // <-- Importante
+  imports: [CommonModule],
   templateUrl: './punto1.component.html',
-  styleUrl: './punto1.component.css'
+  styleUrls: ['./punto1.component.css']
 })
-export class Punto1Component {
-
-}
+export class Punto1Component {}
