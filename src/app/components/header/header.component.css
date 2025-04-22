@@ -1,0 +1,11 @@
+.navbar .nav-link:hover {
+    background-color: #C8D2FF !important;
+    transform: translateY(-2px);
+}
+
+.navbar .nav-link.active {
+    background-color: #BDC7FF !important;
+    color: #3A4980 !important;
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(93, 111, 182, 0.15);
+}
