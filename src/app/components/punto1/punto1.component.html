@@ -1,0 +1,95 @@
+<div class="container py-3">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      <div class="card">
+        <div class="card-header bg-info text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-newspaper me-2"></i>Últimas Noticias
+          </h5>
+        </div>
+        <div class="card-body p-0">
+          <div id="carouselNoticias" class="carousel carousel-dark slide" data-bs-ride="carousel">
+            <!-- Indicadores del carrusel -->
+            <div class="carousel-indicators">
+              <button *ngFor="let noticia of noticias; let i = index" type="button" data-bs-target="#carouselNoticias"
+                [attr.data-bs-slide-to]="i" [class.active]="i === 0" [attr.aria-current]="i === 0 ? 'true' : 'false'"
+                [attr.aria-label]="'Slide ' + (i + 1)">
+              </button>
+            </div>
+
+            <!-- Contenedor de slides -->
+            <div class="carousel-inner">
+              <div *ngFor="let noticia of noticias; let i = index" class="carousel-item" [class.active]="i === 0"
+                [attr.data-bs-interval]="5000">
+                <!-- Estructura para pantallas medianas y grandes -->
+                <div class="d-none d-md-block">
+                  <img [src]="noticia.imagen" class="d-block w-100" style="height: 550px; object-fit: cover;"
+                    [alt]="noticia.titulo">
+                  <div class="carousel-caption">
+                    <div class="bg-dark bg-opacity-75 p-3 rounded">
+                      <span class="badge bg-warning mb-2">
+                        <i class="bi bi-star-fill me-1"></i>Destacado
+                      </span>
+                      <p class="text-white small mb-1">
+                        <i class="bi bi-calendar-event me-2"></i>{{noticia.fecha}}
+                      </p>
+                      <h4 class="text-white">{{noticia.titulo}}</h4>
+                      <p class="text-white-50">{{noticia.descripcion}}</p>
+                      <button class="btn btn-success btn-sm">
+                        <i class="bi bi-arrow-right-circle me-1"></i>Leer más
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Estructura adaptada para móviles -->
+                <div class="d-md-none">
+                  <img [src]="noticia.imagen" class="d-block w-100" style="height: 300px; object-fit: cover;"
+                    [alt]="noticia.titulo">
+                  <div class="p-3 bg-light">
+                    <span class="badge bg-warning mb-2">
+                      <i class="bi bi-star-fill me-1"></i>Destacado
+                    </span>
+                    <p class="text-muted small mb-1">
+                      <i class="bi bi-calendar-event me-2"></i>{{noticia.fecha}}
+                    </p>
+                    <h5 class="text-primary">{{noticia.titulo}}</h5>
+                    <p class="small text-secondary">{{noticia.descripcion}}</p>
+                    <button class="btn btn-success btn-sm">
+                      <i class="bi bi-arrow-right-circle me-1"></i>Leer más
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Controles de navegación -->
+            <button class="carousel-control-prev d-none d-md-block" type="button" data-bs-target="#carouselNoticias"
+              data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Anterior</span>
+            </button>
+            <button class="carousel-control-next d-none d-md-block" type="button" data-bs-target="#carouselNoticias"
+              data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Siguiente</span>
+            </button>
+          </div>
+        </div>
+        <div class="card-footer bg-light">
+          <div class="d-flex justify-content-between align-items-center">
+            <small><i class="bi bi-info-circle me-2"></i>Avance automático</small>
+            <div>
+              <span class="badge bg-success text-white me-1">
+                <i class="bi bi-hash me-1"></i>Noticias
+              </span>
+              <span class="badge bg-info text-white">
+                <i class="bi bi-hash me-1"></i>Actualidad
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
