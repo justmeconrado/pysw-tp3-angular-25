@@ -1,1 +1,133 @@
-<p>punto3 works!</p>
+<!-- Contenedor principal del juego con espaciado vertical -->
+<div class="py-5">
+  <!-- Contenedor del juego con clase personalizada -->
+  <div class="container ahorcado-container">
+    <!-- Fila para el título y la categoría -->
+    <div class="row">
+      <div class="col-12 text-center mb-3">
+        <!-- Título principal del juego -->
+        <h2>Juego del Ahorcado</h2>
+        <!-- Muestra la categoría de palabras obtenida del servicio -->
+        <h4>Categoría: {{ ahorcadoService.getCategoria() }}</h4>
+      </div>
+    </div>
+
+    <!-- Fila principal que contiene el juego -->
+    <div class="row">
+      <!-- Columna izquierda: Imagen del ahorcado y contador de intentos -->
+      <div class="col-md-6 text-center">
+        <!-- Contenedor de la imagen con estado actual del ahorcado -->
+        <div class="imagen-ahorcado">
+          <!-- La imagen se actualiza dinámicamente según el estado del juego -->
+          <img [src]="getImagenSrc()" alt="Estado del ahorcado" class="img-fluid">
+        </div>
+        <!-- Contador de intentos restantes -->
+        <div class="intentos-restantes mt-3">
+          <h5>Intentos restantes: {{ intentosRestantes }}</h5>
+        </div>
+      </div>
+
+      <!-- Columna derecha: Palabra a adivinar y teclado virtual -->
+      <div class="col-md-6">
+        <!-- Visualización de la palabra oculta con guiones y letras adivinadas -->
+        <div class="palabra-oculta text-center mb-4">
+          <h3>
+            <!-- Itera sobre cada letra de la palabra oculta -->
+            <span *ngFor="let letra of palabraOculta" class="letra-oculta mx-1">{{ letra }}</span>
+          </h3>
+        </div>
+
+        <!-- Teclado virtual con todas las letras del alfabeto -->
+        <div class="letras-teclado">
+          <div class="row g-2">
+            <!-- Genera un botón para cada letra del alfabeto -->
+            <div class="col-auto" *ngFor="let letra of alfabeto">
+              <!--
+                Botón con clases dinámicas según el estado:
+                - Azul (btn-primary): Letra no utilizada
+                - Verde (btn-success): Letra correcta
+                - Rojo (btn-danger): Letra incorrecta
+                - Deshabilitado: Letra ya utilizada o juego terminado
+              -->
+              <button class="btn" [ngClass]="{
+                'btn-primary': !letraYaIngresada(letra),
+                'btn-success': letraYaIngresada(letra) && palabraOculta.includes(letra),
+                'btn-danger': letraYaIngresada(letra) && !palabraOculta.includes(letra),
+                'disabled': letraYaIngresada(letra) || estadoJuego !== 'jugando'
+              }" (click)="intentarLetra(letra)" [disabled]="letraYaIngresada(letra) || estadoJuego !== 'jugando'">
+                {{ letra.toUpperCase() }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Campo de texto alternativo para ingresar letras manualmente -->
+        <div class="input-letra mt-4" *ngIf="estadoJuego === 'jugando'">
+          <div class="input-group">
+            <!-- Input con límite de un carácter y binding bidireccional -->
+            <input type="text" class="form-control" placeholder="Ingrese una letra" maxlength="1"
+              [(ngModel)]="letraActual" (keyup.enter)="intentarLetraInput()">
+            <!-- Botón para enviar la letra ingresada -->
+            <button class="btn btn-outline-primary" type="button" (click)="intentarLetraInput()"
+              [disabled]="!letraActual">
+              Probar
+            </button>
+          </div>
+        </div>
+
+        <!-- Botón para reiniciar el juego (solo visible cuando el juego ha terminado) -->
+        <div class="text-center mt-4" *ngIf="estadoJuego !== 'jugando'">
+          <button class="btn btn-primary" (click)="reiniciarJuego()">
+            Jugar de nuevo
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal que se muestra cuando el jugador gana -->
+  <div class="modal fade" [ngClass]="{'show d-block': mostrarModalVictoria}" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <!-- Encabezado del modal con fondo verde -->
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title">¡Felicitaciones!</h5>
+        </div>
+        <!-- Cuerpo del modal con mensaje de victoria -->
+        <div class="modal-body text-center">
+          <h3>¡Has ganado!</h3>
+          <p>Adivinaste correctamente la palabra: <strong>{{ ahorcadoService.getPalabraSeleccionada() }}</strong></p>
+        </div>
+        <!-- Pie del modal con botón para reiniciar -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" (click)="reiniciarJuego()">Jugar de nuevo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Fondo oscuro para el modal de victoria -->
+  <div class="modal-backdrop fade show" *ngIf="mostrarModalVictoria"></div>
+
+  <!-- Modal que se muestra cuando el jugador pierde -->
+  <div class="modal fade" [ngClass]="{'show d-block': mostrarModalDerrota}" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <!-- Encabezado del modal con fondo rojo -->
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title">¡Oh no!</h5>
+        </div>
+        <!-- Cuerpo del modal con mensaje de derrota -->
+        <div class="modal-body text-center">
+          <h3>Has perdido</h3>
+          <p>La palabra correcta era: <strong>{{ ahorcadoService.getPalabraSeleccionada() }}</strong></p>
+        </div>
+        <!-- Pie del modal con botón para reiniciar -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" (click)="reiniciarJuego()">Intentar de nuevo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Fondo oscuro para el modal de derrota -->
+  <div class="modal-backdrop fade show" *ngIf="mostrarModalDerrota"></div>
+</div>
