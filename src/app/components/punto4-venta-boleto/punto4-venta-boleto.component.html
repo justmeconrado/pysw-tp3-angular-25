@@ -1,1 +1,64 @@
-<p>punto4-venta-boleto works!</p>
+<div class="py-5">
+  <!-- Contenedor principal con margen superior -->
+  <div class="container mt-4">
+    <!-- Formulario con referencia de plantilla para validación y estilo de tarjeta -->
+    <form #boletoForm="ngForm" class="card">
+      <!-- Encabezado del formulario con fondo azul y texto blanco -->
+      <div class="card-header bg-primary text-white">Venta de Boletos</div>
+      <div class="card-body">
+        <!-- Campo para el DNI del pasajero -->
+        <div class="mb-3">
+          <label class="form-label">DNI</label>
+          <!-- Input con enlace bidireccional al modelo y validación requerida -->
+          <input type="text" class="form-control" [(ngModel)]="boleto.dni" name="dni" required>
+        </div>
+
+        <!-- Selector de categoría de turista -->
+        <div class="mb-3">
+          <label class="form-label">Categoría</label>
+          <!-- Select con enlace al modelo y evento de cambio para recalcular precio -->
+          <select class="form-select" [(ngModel)]="boleto.categoriaTurista" name="categoria"
+            (change)="calcularPrecio()">
+            <!-- Opciones generadas dinámicamente desde el array de categorías -->
+            <option *ngFor="let cat of categorias" [value]="cat.id">{{cat.nombre}}</option>
+          </select>
+        </div>
+
+        <!-- Campo para el precio base del boleto -->
+        <div class="mb-3">
+          <label class="form-label">Precio Base</label>
+          <!-- Input numérico con enlace al modelo y evento de entrada para recalcular precio -->
+          <input type="number" class="form-control" [(ngModel)]="boleto.precioBase" name="precio"
+            (input)="calcularPrecio()">
+        </div>
+
+        <!-- Alerta que muestra el precio final (solo visible si hay un precio base) -->
+        <div *ngIf="boleto.precioBase > 0" class="alert alert-info">
+          <strong>Total a pagar:</strong> {{ boleto.precioFinal | currency }}
+          <div *ngIf="boleto.categoriaTurista !== 2" class="mt-1">
+            <small class="text-success">
+              <strong>¡Descuento aplicado!</strong> Precio original: {{ boleto.precioBase | currency }}
+            </small>
+          </div>
+        </div>
+
+        <!-- Campo para el email del pasajero -->
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <!-- Input de tipo email con enlace al modelo -->
+          <input type="email" class="form-control" [(ngModel)]="boleto.email" name="email">
+        </div>
+
+        <!-- Botón para registrar la venta, deshabilitado si el formulario no es válido -->
+        <div class="d-flex gap-2">
+          <button class="btn btn-success" (click)="registrarBoleto()" [disabled]="!boletoForm.form.valid">
+            Registrar Venta
+          </button>
+          <a routerLink="/punto4-lista" class="btn btn-primary">
+            Ver Lista de Boletos
+          </a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

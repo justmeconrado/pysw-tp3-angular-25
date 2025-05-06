@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Punto4VentaBoletoComponent } from './punto4-venta-boleto.component';
+import { VentaBoletoComponent } from './punto4-venta-boleto.component';
 
-describe('Punto4VentaBoletoComponent', () => {
-  let component: Punto4VentaBoletoComponent;
-  let fixture: ComponentFixture<Punto4VentaBoletoComponent>;
+describe('VentaBoletoComponent', () => {
+  let component: VentaBoletoComponent;
+  let fixture: ComponentFixture<VentaBoletoComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Punto4VentaBoletoComponent]
+      imports: [VentaBoletoComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Punto4VentaBoletoComponent);
+    fixture = TestBed.createComponent(VentaBoletoComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

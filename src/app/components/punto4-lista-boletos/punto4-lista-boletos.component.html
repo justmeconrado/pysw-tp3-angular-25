@@ -1,1 +1,72 @@
-<p>punto4-lista-boletos works!</p>
+<div class="py-5">
+  <!-- Contenedor principal con margen superior -->
+  <div class="container mt-4">
+    <!-- Título de la sección y botón de navegación -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3>Boletos Vendidos</h3>
+      <a routerLink="/punto4" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i> Vender Nuevo Boleto
+      </a>
+    </div>
+
+    <!-- Tabla de boletos con estilo de rayas alternadas -->
+    <table class="table table-striped">
+      <!-- Encabezado de la tabla -->
+      <thead>
+        <tr>
+          <th>DNI</th>
+          <th>Categoría</th>
+          <th>Precio Base</th>
+          <th>Descuento</th>
+          <th>Total</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <!-- Cuerpo de la tabla con datos dinámicos -->
+      <tbody>
+        <!-- Iteración sobre cada boleto obtenido del servicio -->
+        <tr *ngFor="let b of boletoService.obtenerBoletos()">
+          <td>{{ b.dni }}</td>
+          <!-- Conversión del código numérico a nombre de categoría -->
+          <td>{{ getCategoriaNombre(b.categoriaTurista) }}</td>
+          <!-- Precio base formateado como moneda argentina -->
+          <td>{{ b.precioBase | currency:'ARS':'symbol-narrow':'1.2-2' }}</td>
+          <!-- Cálculo y formateo del descuento aplicado -->
+          <td>{{ (b.precioBase - b.precioFinal) | currency:'ARS':'symbol-narrow':'1.2-2' }}</td>
+          <!-- Precio final formateado como moneda argentina -->
+          <td>{{ b.precioFinal | currency:'ARS':'symbol-narrow':'1.2-2' }}</td>
+          <!-- Fecha formateada en formato día/mes/año -->
+          <td>{{ b.fechaCompra | date:'dd/MM/yyyy':'UTC' }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Sección de resumen de ventas -->
+    <h4 class="mt-5">Resumen de Ventas</h4>
+    <!-- Tabla de resumen con bordes completos -->
+    <table class="table table-bordered">
+      <!-- Encabezado de la tabla de resumen -->
+      <thead>
+        <tr>
+          <th>Categoría</th>
+          <th>Total Vendido</th>
+        </tr>
+      </thead>
+      <!-- Cuerpo de la tabla de resumen -->
+      <tbody>
+        <!-- Iteración sobre cada categoría del resumen -->
+        <tr *ngFor="let r of boletoService.obtenerResumen()">
+          <td>{{ r.categoria }}</td>
+          <!-- Total por categoría formateado como moneda argentina -->
+          <td>{{ r.total | currency:'ARS':'symbol-narrow':'1.2-2' }}</td>
+        </tr>
+        <!-- Fila destacada con el total general -->
+        <tr class="table-active">
+          <td><strong>Total General</strong></td>
+          <!-- Total general calculado desde el componente -->
+          <td><strong>{{ totalGeneral | currency:'ARS':'symbol-narrow':'1.2-2' }}</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -18,7 +18,7 @@ export class BoletoService {
   /**
    * Agrega un nuevo boleto a la colección.
    * Asigna automáticamente un ID único al boleto antes de agregarlo.
-   * 
+   *
    * @param boleto El objeto Boleto a agregar
    */
   agregarBoleto(boleto: Boleto): void {
@@ -29,17 +29,18 @@ export class BoletoService {
   /**
    * Obtiene una copia de todos los boletos almacenados.
    * Retorna una copia para evitar modificaciones accidentales de la colección original.
-   * 
+   *
    * @returns Array con todos los boletos registrados
    */
   obtenerBoletos(): Boleto[] {
+    console.log('Current boletos:', this.boletos);
     return [...this.boletos];
   }
 
   /**
    * Genera un resumen de ventas por categoría de turista.
    * Calcula el total de ventas para cada categoría (Menor, Adulto, Jubilado).
-   * 
+   *
    * @returns Array de objetos con el nombre de la categoría y el total de ventas
    */
   obtenerResumen(): { categoria: string, total: number }[] {
@@ -53,7 +54,7 @@ export class BoletoService {
   /**
    * Calcula el total de ventas para una categoría específica.
    * Filtra los boletos por categoría y suma sus precios finales.
-   * 
+   *
    * @param categoria El código de categoría (1=Menor, 2=Adulto, 3=Jubilado)
    * @returns El monto total de ventas para la categoría especificada
    * @private Método interno del servicio
@@ -68,7 +69,7 @@ export class BoletoService {
    * Genera un ID único para un nuevo boleto.
    * Si existen boletos, toma el ID máximo y le suma 1.
    * Si no hay boletos, comienza con el ID 1.
-   * 
+   *
    * @returns Un número entero único para usar como ID
    * @private Método interno del servicio
    */

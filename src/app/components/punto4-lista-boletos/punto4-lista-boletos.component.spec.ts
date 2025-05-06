@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Punto4ListaBoletosComponent } from './punto4-lista-boletos.component';
+import { ListaBoletosComponent } from './punto4-lista-boletos.component';
 
-describe('Punto4ListaBoletosComponent', () => {
-  let component: Punto4ListaBoletosComponent;
-  let fixture: ComponentFixture<Punto4ListaBoletosComponent>;
+describe('ListaBoletosComponent', () => {
+  let component: ListaBoletosComponent;
+  let fixture: ComponentFixture<ListaBoletosComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Punto4ListaBoletosComponent]
+      imports: [ListaBoletosComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Punto4ListaBoletosComponent);
+    fixture = TestBed.createComponent(ListaBoletosComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

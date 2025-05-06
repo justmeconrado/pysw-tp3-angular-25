@@ -26,11 +26,14 @@ export class Boleto {
    * - Menores (categoría 1): 35% de descuento
    * - Adultos (categoría 2): Sin descuento
    * - Jubilados (categoría 3): 50% de descuento
-   * 
+   *
    * @returns El precio final después de aplicar los descuentos correspondientes.
    */
   get precioFinal(): number {
-    switch(this.categoriaTurista) {
+    // Aseguramos que categoriaTurista sea tratado como número
+    const categoria = Number(this.categoriaTurista);
+
+    switch(categoria) {
       case 1: return this.precioBase * 0.65;  // 35% desc
       case 3: return this.precioBase * 0.5;   // 50% desc
       default: return this.precioBase;        // Sin descuento
