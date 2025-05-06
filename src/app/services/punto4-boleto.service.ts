@@ -4,6 +4,7 @@ import { Boleto } from '../models/punto4-boleto';
 /**
  * Servicio para la gestión de boletos de viaje.
  * Proporciona funcionalidades para agregar, consultar y obtener estadísticas de boletos.
+ * Implementa persistencia de datos mediante localStorage.
  */
 @Injectable({
   providedIn: 'root'
@@ -15,15 +16,55 @@ export class BoletoService {
    */
   private boletos: Boleto[] = [];
 
+  constructor() {
+    this.cargarBoletos();
+  }
+
+  /**
+   * Carga los boletos desde localStorage al iniciar el servicio
+   */
+  private cargarBoletos(): void {
+    const boletosGuardados = localStorage.getItem('boletos');
+    if (boletosGuardados) {
+      try {
+        const boletosData = JSON.parse(boletosGuardados);
+        this.boletos = boletosData.map((b: any) => {
+          // Convertir fechas de string a Date
+          return new Boleto(
+            b.dni,
+            b.precioBase,
+            Number(b.categoriaTurista),
+            new Date(b.fechaCompra),
+            b.email,
+            b.id
+          );
+        });
+        console.log('Boletos cargados desde localStorage:', this.boletos);
+      } catch (error) {
+        console.error('Error al cargar boletos:', error);
+        this.boletos = [];
+      }
+    }
+  }
+
+  /**
+   * Guarda los boletos en localStorage
+   */
+  private guardarBoletos(): void {
+    localStorage.setItem('boletos', JSON.stringify(this.boletos));
+  }
+
   /**
    * Agrega un nuevo boleto a la colección.
    * Asigna automáticamente un ID único al boleto antes de agregarlo.
+   * Persiste los cambios en localStorage.
    *
    * @param boleto El objeto Boleto a agregar
    */
   agregarBoleto(boleto: Boleto): void {
     boleto.id = this.generarId();
     this.boletos.push(boleto);
+    this.guardarBoletos();
   }
 
   /**
@@ -49,6 +90,27 @@ export class BoletoService {
       { categoria: 'Adulto', total: this.calcularTotal(2) },
       { categoria: 'Jubilado', total: this.calcularTotal(3) }
     ];
+  }
+
+  /**
+   * Elimina un boleto por su ID y persiste los cambios
+   * @param id ID del boleto a eliminar
+   */
+  eliminarBoleto(id: number): void {
+    this.boletos = this.boletos.filter(b => b.id !== id);
+    this.guardarBoletos();
+  }
+
+  /**
+   * Actualiza un boleto existente y persiste los cambios
+   * @param boleto Boleto con los datos actualizados
+   */
+  actualizarBoleto(boleto: Boleto): void {
+    const index = this.boletos.findIndex(b => b.id === boleto.id);
+    if (index !== -1) {
+      this.boletos[index] = boleto;
+      this.guardarBoletos();
+    }
   }
 
   /**

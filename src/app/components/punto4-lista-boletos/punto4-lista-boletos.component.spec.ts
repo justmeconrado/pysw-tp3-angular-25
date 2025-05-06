@@ -10,7 +10,7 @@ describe('ListaBoletosComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ListaBoletosComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(ListaBoletosComponent);
     component = fixture.componentInstance;

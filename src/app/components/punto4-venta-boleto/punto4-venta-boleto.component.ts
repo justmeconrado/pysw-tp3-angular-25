@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Boleto } from '../../models/punto4-boleto';
 import { BoletoService } from '../../services/punto4-boleto.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
+
+declare var bootstrap: any;
 
 /**
  * Componente para la venta de boletos.
@@ -16,7 +18,7 @@ import { RouterModule } from '@angular/router';
   styleUrl: './punto4-venta-boleto.component.css',
   standalone: true
 })
-export class VentaBoletoComponent {
+export class VentaBoletoComponent implements OnInit {
   /**
    * Objeto boleto que se enlaza con el formulario.
    * Se inicializa con valores predeterminados.
@@ -37,7 +39,22 @@ export class VentaBoletoComponent {
    * Constructor del componente.
    * @param boletoService Servicio para gestionar los boletos
    */
-  constructor(private boletoService: BoletoService) {}
+  /**
+   * Modal para confirmación de registro
+   */
+  private confirmacionModal: any;
+
+  constructor(private boletoService: BoletoService, private router: Router) { }
+
+  /**
+   * Inicializa el componente y configura el modal
+   */
+  ngOnInit() {
+    // Inicializar modal después de que el DOM esté listo
+    setTimeout(() => {
+      this.confirmacionModal = new bootstrap.Modal(document.getElementById('confirmacionModal'));
+    }, 0);
+  }
 
   /**
    * Método para calcular el precio final del boleto.
@@ -56,8 +73,43 @@ export class VentaBoletoComponent {
   }
 
   /**
+   * Obtiene el porcentaje de descuento según la categoría del turista.
+   * @returns El porcentaje de descuento aplicado
+   */
+  getDescuentoPorcentaje(): number {
+    const categoria = Number(this.boleto.categoriaTurista);
+    switch (categoria) {
+      case 1: return 35;  // 35% descuento para menores
+      case 3: return 50;  // 50% descuento para jubilados
+      default: return 0;  // Sin descuento para adultos
+    }
+  }
+
+  /**
+   * Obtiene el texto descriptivo de la categoría seleccionada.
+   * @returns Nombre de la categoría en formato legible
+   */
+  getCategoriaTexto(): string {
+    const categoria = Number(this.boleto.categoriaTurista);
+    switch (categoria) {
+      case 1: return 'Menor (35% desc)';
+      case 2: return 'Adulto';
+      case 3: return 'Jubilado (50% desc)';
+      default: return 'Desconocido';
+    }
+  }
+
+  /**
+   * Calcula el monto del descuento aplicado al precio base.
+   * @returns El monto del descuento
+   */
+  getDescuentoMonto(): number {
+    return this.boleto.precioBase - this.boleto.precioFinal;
+  }
+
+  /**
    * Registra un nuevo boleto en el sistema.
-   * Agrega el boleto actual al servicio y reinicia el formulario con valores predeterminados.
+   * Agrega el boleto actual al servicio y muestra un modal de confirmación.
    */
   registrarBoleto(): void {
     // Aseguramos que la categoría sea un número
@@ -76,7 +128,64 @@ export class VentaBoletoComponent {
     this.boletoService.agregarBoleto(boletoParaAgregar);
     console.log('Boleto registrado:', boletoParaAgregar);
 
-    // Reiniciamos el formulario
+    // Guardamos los datos actuales para mostrarlos en el modal
+    const datosActuales = { ...this.boleto };
+
+    // Reiniciamos el formulario para futuras entradas
+    this.reiniciarFormulario();
+
+    // Restauramos temporalmente los datos para mostrarlos en el modal
+    this.boleto = new Boleto(
+      datosActuales.dni,
+      datosActuales.precioBase,
+      Number(datosActuales.categoriaTurista),
+      new Date(),
+      datosActuales.email
+    );
+
+    // Mostramos el modal de confirmación
+    this.confirmacionModal.show();
+
+    // Configuramos un evento para reiniciar el formulario cuando se cierre el modal
+    const modalElement = document.getElementById('confirmacionModal');
+    if (modalElement) {
+      modalElement.addEventListener('hidden.bs.modal', () => {
+        this.reiniciarFormulario();
+      }, { once: true });
+    }
+  }
+
+  /**
+   * Reinicia el formulario con valores predeterminados
+   */
+  reiniciarFormulario(): void {
     this.boleto = new Boleto('', 0, 2, new Date(), '');
+  }
+
+  /**
+   * Oculta el modal de confirmación y navega a la lista de boletos.
+   */
+  verListaDeBoletos(): void {
+    if (this.confirmacionModal) {
+      this.confirmacionModal.hide();
+    }
+    // Esperar a que el modal se oculte completamente antes de navegar
+    const modalElement = document.getElementById('confirmacionModal');
+    if (modalElement) {
+      // Asegurarse de que el listener se añade solo una vez o se limpia
+      const navigateToList = () => {
+        this.router.navigate(['/punto4-lista']);
+        modalElement.removeEventListener('hidden.bs.modal', navigateToList);
+      };
+      modalElement.addEventListener('hidden.bs.modal', navigateToList, { once: true });
+
+      // Si el modal no está visible, navegar inmediatamente
+      if (!modalElement.classList.contains('show')) {
+        this.router.navigate(['/punto4-lista']);
+      }
+    } else {
+      // Si el elemento modal no existe, navegar directamente
+      this.router.navigate(['/punto4-lista']);
+    }
   }
 }
