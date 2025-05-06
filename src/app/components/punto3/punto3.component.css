@@ -1,0 +1,91 @@
+/* Contenedor principal del juego con estilo de tarjeta */
+.ahorcado-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Contenedor para la imagen del ahorcado */
+.imagen-ahorcado {
+  margin-bottom: 20px;
+  min-height: 250px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Estilo para la imagen del ahorcado */
+.imagen-ahorcado img {
+  max-height: 300px;
+  object-fit: contain;
+}
+
+/* Estilo para el contenedor de la palabra a adivinar */
+.palabra-oculta {
+  margin-bottom: 30px;
+  letter-spacing: 5px;
+}
+
+/* Estilo para cada letra o guion de la palabra oculta */
+.letra-oculta {
+  display: inline-block;
+  width: 30px;
+  font-size: 24px;
+  font-weight: bold;
+  border-bottom: 2px solid #343a40;
+  text-align: center;
+  margin: 0 5px;
+}
+
+/* Estilo para los botones del teclado virtual */
+.letras-teclado .btn {
+  min-width: 40px;
+  margin: 3px;
+  font-weight: bold;
+}
+
+/* Estilo para el contador de intentos restantes */
+.intentos-restantes {
+  font-weight: bold;
+  color: #dc3545;
+}
+
+/* Estilos para los modales de victoria y derrota */
+.modal-backdrop {
+  opacity: 0.5;
+}
+
+/* Estilo para el contenido de los modales */
+.modal-content {
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+/* Estilo para los botones de letras correctas (verde) */
+.btn-success {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+/* Estilo para los botones de letras incorrectas (rojo) */
+.btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+/* Estilos responsivos para pantallas pequeñas */
+@media (max-width: 767px) {
+  /* Reducción del tamaño de las letras en pantallas pequeñas */
+  .letra-oculta {
+    width: 25px;
+    font-size: 20px;
+  }
+
+  /* Reducción del tamaño de los botones en pantallas pequeñas */
+  .letras-teclado .btn {
+    min-width: 35px;
+    font-size: 14px;
+  }
+}
