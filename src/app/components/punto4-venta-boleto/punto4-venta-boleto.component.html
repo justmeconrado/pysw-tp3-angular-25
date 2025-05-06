@@ -1,0 +1,128 @@
+<div class="py-5">
+  <!-- Contenedor principal con margen superior -->
+  <div class="container mt-4">
+    <!-- Formulario con referencia de plantilla para validación y estilo de tarjeta -->
+    <form #boletoForm="ngForm" class="card shadow">
+      <!-- Encabezado del formulario con fondo azul y texto blanco -->
+      <div class="card-header bg-primary text-white">
+        <i class="bi bi-ticket-perforated-fill me-2"></i>Venta de Boletos
+      </div>
+      <div class="card-body">
+        <!-- Campo para el DNI del pasajero con validación e ícono -->
+        <div class="mb-3">
+          <label class="form-label"><i class="bi bi-person-badge me-2"></i>DNI</label>
+          <!-- Input con validación de longitud y feedback visual -->
+          <input type="number" class="form-control" [(ngModel)]="boleto.dni" name="dni" #dniInput="ngModel" required
+            pattern="^\d{6,10}$" [class.is-invalid]="dniInput.invalid && (dniInput.dirty || dniInput.touched)"
+            placeholder="Ingrese su DNI">
+          <div *ngIf="dniInput.invalid && (dniInput.dirty || dniInput.touched)" class="invalid-feedback">
+            <div *ngIf="dniInput.errors?.['required']">El DNI es obligatorio.</div>
+            <div *ngIf="dniInput.errors?.['pattern']">El DNI debe tener entre 6 y 10 dígitos.</div>
+          </div>
+        </div>
+
+        <!-- Selector de categoría de turista con íconos -->
+        <div class="mb-3">
+          <label class="form-label"><i class="bi bi-people-fill me-2"></i>Categoría</label>
+          <!-- Select con enlace al modelo y evento de cambio para recalcular precio -->
+          <select class="form-select" [(ngModel)]="boleto.categoriaTurista" name="categoria"
+            (change)="calcularPrecio()">
+            <option value="1"><i class="bi bi-emoji-smile"></i> Menor (35% off)</option>
+            <option value="2"><i class="bi bi-person"></i> Adulto</option>
+            <option value="3"><i class="bi bi-emoji-heart-eyes"></i> Jubilado (50% off)</option>
+          </select>
+        </div>
+
+        <!-- Campo para el precio base del boleto con ícono y grupo de input -->
+        <div class="mb-3">
+          <label class="form-label"><i class="bi bi-currency-dollar me-2"></i>Precio Base</label>
+          <!-- Input group con símbolo $ -->
+          <div class="input-group">
+            <span class="input-group-text">$</span>
+            <input type="number" class="form-control" [(ngModel)]="boleto.precioBase" name="precio"
+              #precioInput="ngModel" required min="1"
+              [class.is-invalid]="precioInput.invalid && (precioInput.dirty || precioInput.touched)"
+              (input)="calcularPrecio()">
+            <div *ngIf="precioInput.invalid && (precioInput.dirty || precioInput.touched)" class="invalid-feedback">
+              <div *ngIf="precioInput.errors?.['required']">El precio es obligatorio.</div>
+              <div *ngIf="precioInput.errors?.['min']">El precio debe ser mayor a 0.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card con desglose del precio -->
+        <div *ngIf="boleto.precioBase > 0" class="card mt-3 shadow-sm">
+          <div class="card-body">
+            <h6 class="card-title"><i class="bi bi-receipt"></i> Desglose</h6>
+            <p class="mb-1">Precio base: {{ boleto.precioBase | currency }}</p>
+            <p class="mb-1">Descuento: {{ getDescuentoPorcentaje() }}% (-{{ getDescuentoMonto() | currency }})</p>
+            <hr>
+            <p class="fw-bold">Total: {{ boleto.precioFinal | currency }}</p>
+          </div>
+        </div>
+
+        <!-- Campo para el email del pasajero con ícono y validación -->
+        <div class="mb-3 mt-3">
+          <label class="form-label"><i class="bi bi-envelope me-2"></i>Email</label>
+          <input type="email" class="form-control" [(ngModel)]="boleto.email" name="email" #emailInput="ngModel"
+            required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+            [class.is-invalid]="emailInput.invalid && (emailInput.dirty || emailInput.touched)"
+            placeholder="ejemplo@mail.com">
+          <div *ngIf="emailInput.invalid && (emailInput.dirty || emailInput.touched)" class="invalid-feedback">
+            <div *ngIf="emailInput.errors?.['required']">El email es obligatorio.</div>
+            <div *ngIf="emailInput.errors?.['pattern']">Ingresa un email válido (ej: usuario&#64;dominio.com).</div>
+          </div>
+        </div>
+
+        <!-- Botones con íconos -->
+        <div class="d-flex gap-2 mt-4">
+          <button class="btn btn-success" (click)="registrarBoleto()" [disabled]="!boletoForm.form.valid">
+            <i class="bi bi-check-circle me-2"></i>Registrar Venta
+          </button>
+          <button type="button" class="btn btn-primary" (click)="verListaDeBoletos()">
+            <i class="bi bi-list-ul me-2"></i>Ver Lista de Boletos
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Modal de confirmación de registro exitoso -->
+  <div class="modal fade" id="confirmacionModal" tabindex="-1" aria-labelledby="confirmacionModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title" id="confirmacionModalLabel"><i class="bi bi-check-circle me-2"></i>Registro Exitoso
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>El boleto ha sido registrado exitosamente con los siguientes datos:</p>
+          <ul class="list-group">
+            <li class="list-group-item"><strong><i class="bi bi-person-badge me-2"></i>DNI:</strong> {{ boleto.dni }}
+            </li>
+            <li class="list-group-item"><strong><i class="bi bi-people-fill me-2"></i>Categoría:</strong> {{
+              getCategoriaTexto() }}</li>
+            <li class="list-group-item"><strong><i class="bi bi-currency-dollar me-2"></i>Precio Base:</strong> {{
+              boleto.precioBase | currency:'ARS':'symbol-narrow':'1.2-2' }}</li>
+            <li class="list-group-item"><strong><i class="bi bi-percent me-2"></i>Descuento:</strong> {{
+              getDescuentoMonto() | currency:'ARS':'symbol-narrow':'1.2-2' }} ({{ getDescuentoPorcentaje() }}%)</li>
+            <li class="list-group-item"><strong><i class="bi bi-cash-coin me-2"></i>Precio Final:</strong> {{
+              boleto.precioFinal | currency:'ARS':'symbol-narrow':'1.2-2' }}</li>
+            <li class="list-group-item"><strong><i class="bi bi-envelope me-2"></i>Email:</strong> {{ boleto.email }}
+            </li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" (click)="verListaDeBoletos()">
+            <i class="bi bi-list-ul me-2"></i>Ver Lista de Boletos
+          </button>
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal" (click)="reiniciarFormulario()">
+            <i class="bi bi-plus-circle me-2"></i>Registrar Otro Boleto
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
